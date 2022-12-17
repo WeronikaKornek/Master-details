@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { Observable } from 'rxjs';
-import { EmployeesModel } from '../../models/employees.model';
+import { Observable, Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { EmployeeModel } from '../../models/employee.model';
 import { EmployeesService } from '../../services/employees.service';
 
 @Component({
@@ -11,8 +12,17 @@ import { EmployeesService } from '../../services/employees.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmployeesComponent {
-  readonly list$: Observable<EmployeesModel[]> = this._employeesService.getAll();
+  readonly list$: Observable<EmployeeModel[]> = this._employeesService.getAll();
+  private _selectedEmployeeIdSubject: Subject<string> = new Subject<string>();
+  public selectedEmployeeId$: Observable<string> = this._selectedEmployeeIdSubject.asObservable();
+  readonly details$: Observable<EmployeeModel> = this.selectedEmployeeId$.pipe(
+    switchMap(data => this._employeesService.getOne(data))
+  );
 
   constructor(private _employeesService: EmployeesService) {
+  }
+
+  select(id: string) {
+    this._selectedEmployeeIdSubject.next(id);
   }
 }

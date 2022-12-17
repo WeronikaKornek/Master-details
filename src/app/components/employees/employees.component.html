@@ -1,6 +1,7 @@
-<mat-card>
-  <mat-card-title></mat-card-title>
-  <mat-card-content>
-    <ng-container *ngIf="list$ | async as item">{{item}}</ng-container>
-  </mat-card-content>
-</mat-card>
+<mat-grid-list cols="2" rowHeight="1:2">
+  <mat-grid-tile> <mat-list role="list"><mat-list-item role="listitem" *ngFor="let item of list$ | async">{{item.employee_name}}
+  <button mat-button color="primary"  (click)="select(item.id)">Show details</button>
+  </mat-list-item></mat-list></mat-grid-tile>
+
+  <mat-grid-tile> <ng-container *ngIf="details$ | async as item">{{item.employee_name}} {{item.employee_salary}}$</ng-container></mat-grid-tile>
+</mat-grid-list>
